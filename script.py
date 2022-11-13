@@ -57,27 +57,27 @@ def turn_in_quest(interval):
         if match_img(COMPLETE_IMG, get_location=False) >= MIN_THRESHOLD:
             # click on the quest name
             quest_location = match_img(QUEST_PROGRESS_IMG, get_location=True)
-            gui.moveTo(quest_location, random.uniform(0.2, 0.3)) # change these numbers as you see fit
+            gui.moveTo(quest_location, duration=random.uniform(0.2, 0.3)) # change these numbers as you see fit
             gui.leftClick()
 
             time.sleep(random.uniform(0.67, 0.85)) # change these numbers as you see fit
 
             # click on the turn in button
             turn_in_location = match_img(TURN_IN_IMG, get_location=True)
-            gui.moveTo(turn_in_location, random.uniform(0.2, 0.3))
+            gui.moveTo(turn_in_location, duration=random.uniform(0.2, 0.3))
             gui.leftClick()
 
             time.sleep(random.uniform(0.67, 0.85))
 
             # click back onto the quest after turning it in
-            gui.moveTo(quest_location, random.uniform(0.2, 0.3))
+            gui.moveTo(quest_location, duration=random.uniform(0.2, 0.3))
             gui.leftClick()
 
             time.sleep(random.uniform(0.67, 0.85))
 
             # reaccept the quest
             accept_location = match_img(ACCEPT_IMG, get_location=True)
-            gui.moveTo(accept_location, random.uniform(0.2, 0.3))
+            gui.moveTo(accept_location, duration=random.uniform(0.2, 0.3))
             gui.leftClick()
 
 
@@ -167,5 +167,5 @@ print("PROGRAM STARTED. Spam press the 'p' key to end.")
 start_time = time.time()
 time.sleep(3)
 
-# Pass in quests=True if you want to automate turning in quests
+# Pass in quests=True if you want to automate turning in quests, otherwise quests=False
 main(quests=True)
