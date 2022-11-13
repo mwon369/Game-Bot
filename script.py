@@ -57,27 +57,27 @@ def turn_in_quest(interval):
         if match_img(COMPLETE_IMG, get_location=False) >= MIN_THRESHOLD:
             # click on the quest name
             quest_location = match_img(QUEST_PROGRESS_IMG, get_location=True)
-            gui.moveTo(quest_location, duration=random.uniform(0.2, 0.3)) # change these numbers as you see fit
+            gui.moveTo(quest_location, duration=random.uniform(0.1, 0.2)) # change these numbers as you see fit
             gui.leftClick()
 
-            time.sleep(random.uniform(0.67, 0.85)) # change these numbers as you see fit
+            time.sleep(random.uniform(0.5, 0.75)) # change these numbers as you see fit
 
             # click on the turn in button
             turn_in_location = match_img(TURN_IN_IMG, get_location=True)
-            gui.moveTo(turn_in_location, duration=random.uniform(0.2, 0.3))
+            gui.moveTo(turn_in_location, duration=random.uniform(0.1, 0.2))
             gui.leftClick()
 
-            time.sleep(random.uniform(0.67, 0.85))
+            time.sleep(random.uniform(2, 2.25))
 
             # click back onto the quest after turning it in
-            gui.moveTo(quest_location, duration=random.uniform(0.2, 0.3))
+            gui.moveTo(quest_location, duration=random.uniform(0.1, 0.2))
             gui.leftClick()
 
-            time.sleep(random.uniform(0.67, 0.85))
+            time.sleep(random.uniform(0.5, 0.75))
 
             # reaccept the quest
             accept_location = match_img(ACCEPT_IMG, get_location=True)
-            gui.moveTo(accept_location, duration=random.uniform(0.2, 0.3))
+            gui.moveTo(accept_location, duration=random.uniform(0.1, 0.2))
             gui.leftClick()
 
 
@@ -98,7 +98,7 @@ def match_img(needle_img):
     min_confidence, max_confidence, min_location, max_location = cv.minMaxLoc(result)
 
     if get_location:
-        return max_location
+        return offset(max_location, 15, 15) # change the numbers as you see fit
     else:
         return max_confidence
 
@@ -148,6 +148,15 @@ def notify(end_time, end):
                                         duration="short",
                                         icon="")
         start_notification.show()
+
+
+"""
+This helper method slightly adjusts the coordinates returned by match_img(). This is done so that we ensure
+that we are clicking on the object since the coordinates returned by default represent the very top left corner
+"""
+def offset(location, x, y):
+    offset_location = (location[0] + x, location[1] + y)
+    return offset_location
 
 
 # Initialize all constant variables
