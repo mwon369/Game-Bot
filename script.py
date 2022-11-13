@@ -85,10 +85,10 @@ def turn_in_quest(interval):
 This helper method screenshots what is currently displayed on screen, compares it to a repository image (needle_img),
 and returns the location, (x,y coordinates) of where the repository image is located within the screen.
 """
-def match_img(needle_img):
+def match_img(needle_img, get_location):
     # save a .PNG image of the entire display and read it in with OpenCV
     screenshot = gui.screenshot()
-    screenshot.save(r"PASTE THE DIRECTORY OF THIS SCRIPT FILE HERE!")
+    screenshot.save(r"PASTE THE DIRECTORY OF THIS SCRIPT FILE HERE!" + "\screenshot.PNG")
     haystack_img = cv.imread('screenshot.PNG', cv.IMREAD_COLOR)
 
     # compare the haystack and needle images to each other
