@@ -88,7 +88,7 @@ and returns the location, (x,y coordinates) of where the repository image is loc
 def match_img(needle_img):
     # save a .PNG image of the entire display and read it in with OpenCV
     screenshot = gui.screenshot()
-    screenshot.save(r"PASTE THE DIRECTORY THAT THIS SCRIPT FILE IS IN HERE!")
+    screenshot.save(r"PASTE THE DIRECTORY OF THIS SCRIPT FILE HERE!")
     haystack_img = cv.imread('screenshot.PNG', cv.IMREAD_COLOR)
 
     # compare the haystack and needle images to each other
@@ -174,7 +174,7 @@ skill_sequence = [skill for skill in text.read().split()[0]]
 notify(None, end=False)
 print("PROGRAM STARTED. Spam press the 'p' key to end.")
 start_time = time.time()
-time.sleep(3)
+time.sleep(4.5)
 
 # Pass in quests=True if you want to automate turning in quests, otherwise quests=False
 main(quests=True)
