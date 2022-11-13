@@ -10,16 +10,22 @@ import os
 from winotify import Notification
 
 
-# Initialize all constant variables
-MIN_THRESHOLD = 0.51
-COMPLETE_IMG = cv.imread('complete.PNG', cv.IMREAD_COLOR)
-QUEST_PROGRESS_IMG = cv.imread('quest_progress.PNG', cv.IMREAD_COLOR)
-TURN_IN_IMG = cv.imread('turn_in.PNG', cv.IMREAD_COLOR)
-ACCEPT_IMG = cv.imread('accept.PNG', cv.IMREAD_COLOR)
+"""
+This method acts as the entry point to our program. It will create two different threads to run
+our processes concurrently if needed.
+"""
+def main(quests):
+    if quests:
+        skills_thread = threading.Thread(target=use_skills, daemon=False)
+        skills_thread.start()
 
-# Read in the skill sequence as a .txt file and convert it to a list so we can repeatedly iterate over it
-text = open("skillSequenceExample.txt")
-skill_sequence = [skill for skill in text.read().split()[0]]
+        quests_thread = threading.Thread(target=turn_in_quest, args=(1,), daemon=True)
+        quests_thread.start()
+
+        skills_thread.join()
+        quests_thread.join()
+    else:
+        use_skills()
 
 
 """
@@ -34,7 +40,7 @@ def use_skills():
 
         # check if the stop hotkey has been pressed to end the program
         if keyboard.is_pressed("p"):
-            notify(round(time.time() - start_time, 0), end=True)
+            notify(round(time.time() - start_time), end=True)
             print("PROGRAM EXITED.")
             os._exit(0)
 
@@ -47,16 +53,16 @@ def turn_in_quest(interval):
         # listen for the quest being completed every 'x' seconds defined by the interval variable
         # for quick quests this interval should be short, for long quests this interval should be longer
         time.sleep(interval)
-        if match_img(COMPLETE_IMG) >= MIN_THRESHOLD:
+        if match_img(COMPLETE_IMG, get_location=False) >= MIN_THRESHOLD:
             # click on the quest name
-            quest_location = match_img(QUEST_PROGRESS_IMG)
+            quest_location = match_img(QUEST_PROGRESS_IMG, get_location=True)
             gui.moveTo(quest_location, random.uniform(0.2, 0.3))
             gui.leftClick()
 
             time.sleep(random.uniform(0.67, 0.85))
 
             # click on the turn in button
-            turn_in_location = match_img(TURN_IN_IMG)
+            turn_in_location = match_img(TURN_IN_IMG, get_location=True)
             gui.moveTo(turn_in_location, random.uniform(0.2, 0.3))
             gui.leftClick()
 
@@ -69,7 +75,7 @@ def turn_in_quest(interval):
             time.sleep(random.uniform(0.67, 0.85))
 
             # reaccept the quest
-            accept_location = match_img(ACCEPT_IMG)
+            accept_location = match_img(ACCEPT_IMG, get_location=True)
             gui.moveTo(accept_location, random.uniform(0.2, 0.3))
             gui.leftClick()
 
@@ -90,7 +96,10 @@ def match_img(needle_img):
     # store the (x,y) coordinate locations of the lowest and highest confidence regions where an image match was found
     min_confidence, max_confidence, min_location, max_location = cv.minMaxLoc(result)
 
-    return max_location
+    if get_location:
+        return max_location
+    else:
+        return max_confidence
 
     # test code
     # outline_img_match(confidence=max_confidence, location=max_location, h_img=haystack_img, n_img=needle_img)
@@ -117,3 +126,43 @@ def outline_img_match(confidence, location, h_img, n_img):
                      color=(255, 0, 255), thickness=2, lineType=cv.LINE_4)
         cv.imshow('Outlined Match', h_img)
         cv.waitKey()
+
+
+"""
+This method sends a desktop notification to the user whenever the program starts or ends
+"""
+def notify(end_time, end):
+    # check if program is ending or starting
+    if end:
+        end_notification = Notification(app_id="Automation Script",
+                                        title="Program Exited",
+                                        msg=f"Program ran for:  {end_time // 60} minute(s) and {end_time % 60} seconds",
+                                        duration="short",
+                                        icon="")
+        end_notification.show()
+    else:
+        start_notification = Notification(app_id="Automation Script",
+                                        title="Program Started! Spam press the 'p' key to end.",
+                                        msg="You have 3 seconds to switch tabs.",
+                                        duration="short",
+                                        icon="")
+        start_notification.show()
+
+
+# Initialize all constant variables
+MIN_THRESHOLD = 0.51
+COMPLETE_IMG = cv.imread('complete.PNG', cv.IMREAD_COLOR)
+QUEST_PROGRESS_IMG = cv.imread('quest_progress.PNG', cv.IMREAD_COLOR)
+TURN_IN_IMG = cv.imread('turn_in.PNG', cv.IMREAD_COLOR)
+ACCEPT_IMG = cv.imread('accept.PNG', cv.IMREAD_COLOR)
+
+# Read in the skill sequence as a .txt file and convert it to a list so we can repeatedly iterate over it
+text = open("skillSequenceExample.txt")
+skill_sequence = [skill for skill in text.read().split()[0]]
+
+# Notify user that the program has started
+notify(None, end=False)
+print("PROGRAM STARTED. Spam press the 'p' key to end.")
+start_time = time.time()
+time.sleep(3)
+main(quests=True)
