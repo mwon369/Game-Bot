@@ -19,6 +19,7 @@ def main(quests):
         skills_thread = threading.Thread(target=use_skills, daemon=False)
         skills_thread.start()
 
+        # change the number passed into args as you see fit
         quests_thread = threading.Thread(target=turn_in_quest, args=(1,), daemon=True)
         quests_thread.start()
 
@@ -32,7 +33,7 @@ def main(quests):
 This method automatically uses our characters skills for us
 """
 def use_skills():
-    # continuously make keypresses to use the skills in our sequence
+    # continuously make key presses to use the skills in our sequence
     for skill in itertools.cycle(skill_sequence):
         gui.typewrite(skill)
         # delay between each key press (change the numbers as you see fit)
@@ -56,10 +57,10 @@ def turn_in_quest(interval):
         if match_img(COMPLETE_IMG, get_location=False) >= MIN_THRESHOLD:
             # click on the quest name
             quest_location = match_img(QUEST_PROGRESS_IMG, get_location=True)
-            gui.moveTo(quest_location, random.uniform(0.2, 0.3))
+            gui.moveTo(quest_location, random.uniform(0.2, 0.3)) # change these numbers as you see fit
             gui.leftClick()
 
-            time.sleep(random.uniform(0.67, 0.85))
+            time.sleep(random.uniform(0.67, 0.85)) # change these numbers as you see fit
 
             # click on the turn in button
             turn_in_location = match_img(TURN_IN_IMG, get_location=True)
@@ -135,8 +136,8 @@ def notify(end_time, end):
     # check if program is ending or starting
     if end:
         end_notification = Notification(app_id="Automation Script",
-                                        title="Program Exited",
-                                        msg=f"Program ran for:  {end_time // 60} minute(s) and {end_time % 60} seconds",
+                                        title="Program Exited.",
+                                        msg=f"Program ran for:  {end_time // 60} minute(s) and {end_time % 60} seconds.",
                                         duration="short",
                                         icon="")
         end_notification.show()
@@ -165,4 +166,6 @@ notify(None, end=False)
 print("PROGRAM STARTED. Spam press the 'p' key to end.")
 start_time = time.time()
 time.sleep(3)
+
+# Pass in quests=True if you want to automate turning in quests
 main(quests=True)
